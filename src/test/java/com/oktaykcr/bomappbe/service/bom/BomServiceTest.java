@@ -1,10 +1,14 @@
 package com.oktaykcr.bomappbe.service.bom;
 
 import com.oktaykcr.bomappbe.common.ListResponse;
+import com.oktaykcr.bomappbe.common.SecurityContextTestHelper;
+import com.oktaykcr.bomappbe.common.TestDataFactory;
 import com.oktaykcr.bomappbe.exception.ApiException;
 import com.oktaykcr.bomappbe.exception.ApiExceptionType;
 import com.oktaykcr.bomappbe.model.bom.Bom;
+import com.oktaykcr.bomappbe.model.user.User;
 import com.oktaykcr.bomappbe.repository.bom.BomRepository;
+import com.oktaykcr.bomappbe.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
@@ -31,20 +34,19 @@ class BomServiceTest {
     @MockBean
     private BomRepository bomRepository;
 
-    private Bom createBom() {
-        return new Bom("title", "description");
-    }
+    @MockBean
+    private UserRepository userRepository;
 
     @Test
     public void list_shouldFindAll() {
-        List<Bom> mockedBomList = Collections.singletonList(createBom());
-
+        Bom bom = TestDataFactory.createBom();
+        List<Bom> mockedBomList = Collections.singletonList(bom);
         ListResponse<Bom> mockedListResponse = ListResponse.response(mockedBomList, mockedBomList.size());
 
+        SecurityContextTestHelper.mockSecurityContextHolder();
         Page<Bom> pageBom = new PageImpl<>(mockedBomList);
-        Pageable pageable = PageRequest.of(1, 1);
-        Mockito.doReturn(pageBom).when(bomRepository).findAll(pageable);
-        Mockito.doReturn((long) mockedBomList.size()).when(bomRepository).count();
+        Mockito.doReturn(pageBom).when(bomRepository).findAllByUserUsername(Mockito.anyString(), Mockito.any(Pageable.class));
+        Mockito.doReturn((long) mockedBomList.size()).when(bomRepository).countBomByUserUsername(Mockito.any());
 
         ListResponse<Bom> listResponse = bomService.list(1, 1);
 
@@ -80,13 +82,16 @@ class BomServiceTest {
 
     @Test
     public void save_shouldSaveBom() {
-        Bom createdBom = createBom();
+        Bom createdBom = TestDataFactory.createBom();
         createdBom.setId("bomId");
 
-        Bom bomRequest = createBom();
+        User user = TestDataFactory.createUser();
+        Bom bomRequest = TestDataFactory.createBom();
 
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        Mockito.doReturn(user).when(userRepository).findByUsername(Mockito.anyString());
         Mockito.doReturn(createdBom).when(bomRepository).save(Mockito.any());
-
 
         Bom result = bomService.save(bomRequest);
 
@@ -97,8 +102,14 @@ class BomServiceTest {
 
     @Test
     public void save_titleIsBlank_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
         bom.setTitle(null);
+
+        User user = TestDataFactory.createUser();
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        Mockito.doReturn(user).when(userRepository).findByUsername(Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             bomService.save(bom);
@@ -113,8 +124,14 @@ class BomServiceTest {
 
     @Test
     public void save_descriptionIsBlank_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
         bom.setDescription(null);
+
+        User user = TestDataFactory.createUser();
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        Mockito.doReturn(user).when(userRepository).findByUsername(Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             bomService.save(bom);
@@ -129,7 +146,7 @@ class BomServiceTest {
 
     @Test
     public void update_shouldUpdateBomTitle() {
-        Bom updatedBom = createBom();
+        Bom updatedBom = TestDataFactory.createBom();
         updatedBom.setDescription(null);
         updatedBom.setId("bomId");
 
@@ -145,7 +162,7 @@ class BomServiceTest {
 
     @Test
     public void update_shouldUpdateBomDescription() {
-        Bom updatedBom = createBom();
+        Bom updatedBom = TestDataFactory.createBom();
         updatedBom.setTitle(null);
         updatedBom.setId("bomId");
 
@@ -161,7 +178,7 @@ class BomServiceTest {
 
     @Test
     public void update_idIsBlank_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             bomService.update(bom);
@@ -176,7 +193,7 @@ class BomServiceTest {
 
     @Test
     public void update_bomIsNotFound_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
         bom.setId("bomId");
 
         Mockito.doReturn(Optional.empty()).when(bomRepository).findById(Mockito.anyString());
@@ -194,7 +211,7 @@ class BomServiceTest {
 
     @Test
     public void findById_shouldFindBomById() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
         bom.setId("bomId");
 
         Mockito.doReturn(Optional.of(bom)).when(bomRepository).findById(bom.getId());
@@ -208,7 +225,7 @@ class BomServiceTest {
 
     @Test
     public void findById_idIsBlank_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             bomService.findById(bom.getId());
@@ -223,7 +240,7 @@ class BomServiceTest {
 
     @Test
     public void findById_bomIsNotFound_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
         bom.setId("bomId");
 
         Mockito.doReturn(Optional.empty()).when(bomRepository).findById(Mockito.anyString());
@@ -241,7 +258,7 @@ class BomServiceTest {
 
     @Test
     public void deleteById_shouldDeleteBomById() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
         bom.setId("bomId");
 
         Mockito.doReturn(Optional.of(bom)).when(bomRepository).findById(bom.getId());
@@ -253,7 +270,7 @@ class BomServiceTest {
 
     @Test
     public void deleteById_idIsBlank_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             bomService.deleteById(bom.getId());
@@ -268,7 +285,7 @@ class BomServiceTest {
 
     @Test
     public void deleteById_bomIsNotFound_shouldThrowException() {
-        Bom bom = createBom();
+        Bom bom = TestDataFactory.createBom();
         bom.setId("bomId");
 
         Mockito.doReturn(Optional.empty()).when(bomRepository).findById(Mockito.anyString());

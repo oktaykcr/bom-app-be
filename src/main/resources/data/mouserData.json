@@ -1,0 +1,87 @@
+{
+  "Errors": [],
+  "SearchResults": {
+    "NumberOfResult": 1,
+    "Parts": [
+      {
+        "Availability": "7998 In Stock",
+        "DataSheetUrl": "https://www.mouser.com/datasheet/2/427/tnpue3-1762586.pdf",
+        "Description": "Thin Film Resistors - SMD 1/10W 7.5Kohms 0.1% 5ppm",
+        "FactoryStock": "0",
+        "ImagePath": "https://www.mouser.com/images/vishay/images/TNPU_DSL.jpg",
+        "Category": "Thin Film Resistors - SMD",
+        "LeadTime": "259 Days",
+        "LifecycleStatus": "New Product",
+        "Manufacturer": "Vishay / Draloric",
+        "ManufacturerPartNumber": "TNPU06037K50BZEN00",
+        "Min": "1",
+        "Mult": "1",
+        "MouserPartNumber": "71-TNPU06037K50BZEN0",
+        "ProductAttributes": [
+          {
+            "AttributeName": "Packaging",
+            "AttributeValue": "Cut Tape"
+          },
+          {
+            "AttributeName": "Packaging",
+            "AttributeValue": "MouseReel"
+          },
+          {
+            "AttributeName": "Packaging",
+            "AttributeValue": "Reel"
+          },
+          {
+            "AttributeName": "Standard Pack Qty",
+            "AttributeValue": "1000"
+          }
+        ],
+        "PriceBreaks": [
+          {
+            "Quantity": 1,
+            "Price": "$2.14",
+            "Currency": "USD"
+          },
+          {
+            "Quantity": 10,
+            "Price": "$1.90",
+            "Currency": "USD"
+          },
+          {
+            "Quantity": 25,
+            "Price": "$1.76",
+            "Currency": "USD"
+          },
+          {
+            "Quantity": 50,
+            "Price": "$1.67",
+            "Currency": "USD"
+          }
+        ],
+        "AlternatePackagings": null,
+        "ProductDetailUrl": "https://www.mouser.com.tr/ProductDetail/Vishay-Draloric/TNPU06037K50BZEN00?qs=bAKSY%2FctAC6plzx7agULJg%3D%3D",
+        "Reeling": true,
+        "ROHSStatus": "RoHS Compliant",
+        "SuggestedReplacement": "",
+        "MultiSimBlue": 0,
+        "UnitWeightKg": {
+          "UnitWeight": 0.000002
+        },
+        "InfoMessages": [],
+        "ProductCompliance": [
+          {
+            "ComplianceName": "USHTS",
+            "ComplianceValue": "8533210030"
+          },
+          {
+            "ComplianceName": "TARIC",
+            "ComplianceValue": "8533210000"
+          },
+          {
+            "ComplianceName": "ECCN",
+            "ComplianceValue": "EAR99"
+          }
+        ]
+      }
+    ]
+  }
+}

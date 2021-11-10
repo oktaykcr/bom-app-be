@@ -1,25 +1,32 @@
 package com.oktaykcr.bomappbe.model.bom;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.oktaykcr.bomappbe.model.base.BaseModel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.oktaykcr.bomappbe.model.component.ComponentUsed;
+import com.oktaykcr.bomappbe.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Data
+@Getter @Setter
+@JsonIgnoreProperties(value = {"user", "componentUsedSet"})
 public class Bom extends BaseModel {
 
     private String title;
-
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy="bom")
+    private Set<ComponentUsed> componentUsedSet = new HashSet<>();
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

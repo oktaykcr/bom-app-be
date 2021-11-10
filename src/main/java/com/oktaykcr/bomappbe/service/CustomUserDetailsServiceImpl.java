@@ -2,9 +2,11 @@ package com.oktaykcr.bomappbe.service;
 
 import com.oktaykcr.bomappbe.exception.ApiExceptionFactory;
 import com.oktaykcr.bomappbe.exception.ApiExceptionType;
+import com.oktaykcr.bomappbe.model.inventory.Inventory;
 import com.oktaykcr.bomappbe.model.user.Role;
 import com.oktaykcr.bomappbe.model.user.User;
 import com.oktaykcr.bomappbe.repository.user.UserRepository;
+import com.oktaykcr.bomappbe.service.inventory.InventoryService;
 import io.jsonwebtoken.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +28,9 @@ import static com.oktaykcr.bomappbe.security.SecurityConstants.SECRET;
 public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    @Autowired
+    private InventoryService inventoryService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -63,6 +69,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
+    @Transactional
     public Boolean save(User user){
         if(StringUtils.isEmpty(user.getUsername())) {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "username");
@@ -85,7 +92,9 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
         User savedUser = userRepository.save(registeredUser);
 
-        return savedUser != null;
+        Inventory userInventory = inventoryService.saveInventoryForUser(savedUser.getUsername());
+
+        return userInventory != null;
     }
 
     private Set<GrantedAuthority> getAuthorities(User user){

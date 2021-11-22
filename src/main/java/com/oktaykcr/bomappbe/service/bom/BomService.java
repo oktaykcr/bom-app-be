@@ -76,8 +76,6 @@ public class BomService extends BaseService<Bom> {
             foundBom.get().setDescription(bom.getDescription());
         }
 
-        foundBom.get().setUpdatedDate(Date.from(Instant.now()));
-
         return bomRepository.save(foundBom.get());
     }
 

@@ -1,13 +1,16 @@
 package com.oktaykcr.bomappbe.model.base;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseModel {
 
     @Id
@@ -16,9 +19,11 @@ public abstract class BaseModel {
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
     private String id;
 
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date createdDate = Date.from(Instant.now());
+    @CreatedDate
+    protected Date createdDate;
+
+    @LastModifiedDate
+    protected Date updatedDate;
 
     public String getId() {
         return id;
@@ -34,6 +39,14 @@ public abstract class BaseModel {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     @Override

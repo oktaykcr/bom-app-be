@@ -7,9 +7,10 @@ import com.oktaykcr.bomappbe.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.time.Instant;
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,10 +28,6 @@ public class Bom extends BaseModel {
 
     @OneToMany(mappedBy="bom")
     private Set<ComponentUsed> componentUsedSet = new HashSet<>();
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date updatedDate = Date.from(Instant.now());
 
     public Bom() {
     }

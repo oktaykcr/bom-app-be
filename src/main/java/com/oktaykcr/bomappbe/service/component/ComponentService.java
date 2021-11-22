@@ -23,9 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -141,7 +139,6 @@ public class ComponentService extends BaseService<Component> {
         }
 
         foundComponent.get().setQuantityOnHand(component.getQuantityOnHand());
-        foundComponent.get().setUpdatedDate(Date.from(Instant.now()));
 
         return componentRepository.save(foundComponent.get());
     }

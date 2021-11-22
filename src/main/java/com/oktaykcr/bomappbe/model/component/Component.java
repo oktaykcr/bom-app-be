@@ -5,9 +5,10 @@ import com.oktaykcr.bomappbe.model.inventory.Inventory;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.time.Instant;
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Getter @Setter
@@ -23,10 +24,6 @@ public class Component extends BaseModel {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "inventory_id")
     private Inventory inventory;
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date updatedDate = Date.from(Instant.now());
 
     public Component() {
     }

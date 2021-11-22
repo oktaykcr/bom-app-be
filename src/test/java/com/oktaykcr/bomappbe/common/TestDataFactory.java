@@ -2,6 +2,7 @@ package com.oktaykcr.bomappbe.common;
 
 import com.oktaykcr.bomappbe.model.bom.Bom;
 import com.oktaykcr.bomappbe.model.component.Component;
+import com.oktaykcr.bomappbe.model.component.ComponentUsed;
 import com.oktaykcr.bomappbe.model.inventory.Inventory;
 import com.oktaykcr.bomappbe.model.user.User;
 import org.springframework.util.ResourceUtils;
@@ -43,6 +44,16 @@ public class TestDataFactory {
         component.setQuantityOnHand(500);
         component.setPartNumber("71-TNPU06037K50BZEN0");
         return component;
+    }
+
+    public static ComponentUsed createComponentUsed() {
+        ComponentUsed componentUsed = new ComponentUsed();
+        componentUsed.setComponent(createComponent());
+        componentUsed.setBom(createBom());
+        componentUsed.setCost(10);
+        componentUsed.setQuantity(100);
+        componentUsed.setLeadTime(1);
+        return componentUsed;
     }
 
     public static String createMouserData() {

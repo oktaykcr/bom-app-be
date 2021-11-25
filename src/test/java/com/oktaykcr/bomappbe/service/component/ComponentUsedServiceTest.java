@@ -292,6 +292,24 @@ public class ComponentUsedServiceTest {
     }
 
     @Test
+    public void listByBom_shouldFindAll() {
+        ComponentUsed componentUsed = TestDataFactory.createComponentUsed();
+        componentUsed.getBom().setId("bomId");
+        List<ComponentUsed> mockedComponentUsedList = Collections.singletonList(componentUsed);
+        ListResponse<ComponentUsed> mockedListResponse = ListResponse.response(mockedComponentUsedList, mockedComponentUsedList.size());
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+        Page<ComponentUsed> pageComponentUsed = new PageImpl<>(mockedComponentUsedList);
+        Mockito.doReturn(pageComponentUsed).when(componentUsedRepository).findAllByBomUserUsernameAndBomId(Mockito.anyString(), Mockito.anyString(), Mockito.any(Pageable.class));
+        Mockito.doReturn((long) mockedComponentUsedList.size()).when(componentUsedRepository).countComponentByBomUserUsernameAndBomId(Mockito.anyString(), Mockito.anyString());
+
+        ListResponse<ComponentUsed> listResponse = componentUsedService.listByBomId(componentUsed.getBom().getId(), 1, 1);
+
+        assertEquals(mockedListResponse.getTotalCount(), listResponse.getTotalCount());
+        assertEquals(mockedListResponse.getData().get(0), listResponse.getData().get(0));
+    }
+
+    @Test
     public void list_pageNumberIsLessThanZero_shouldThrowException() {
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentUsedService.list(-1, 1);

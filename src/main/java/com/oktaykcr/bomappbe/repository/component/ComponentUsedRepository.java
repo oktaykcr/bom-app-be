@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ComponentUsedRepository extends BaseRepository<ComponentUsed> {
     Page<ComponentUsed> findAllByBomUserUsername(String username, Pageable pageable);
+    Page<ComponentUsed> findAllByBomUserUsernameAndBomId(String username, String bomId, Pageable pageable);
     Long countComponentByBomUserUsername(String username);
+    Long countComponentByBomUserUsernameAndBomId(String username, String bomId);
 }

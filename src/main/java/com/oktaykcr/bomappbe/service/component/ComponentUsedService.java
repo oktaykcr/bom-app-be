@@ -106,6 +106,17 @@ public class ComponentUsedService extends BaseService<ComponentUsed> {
         return ListResponse.response(pagedComponentUsed.getContent(), totalCount);
     }
 
+
+    public ListResponse<ComponentUsed> listByBomId(String bomId, Integer pageNumber, Integer pageOffset) {
+        Pageable pageable = createPageable(pageNumber, pageOffset);
+
+        String username = getCurrentAuthenticatedUsername();
+        Page<ComponentUsed> pagedComponentUsed = componentUsedRepository.findAllByBomUserUsernameAndBomId(username, bomId, pageable);
+        long totalCount = componentUsedRepository.countComponentByBomUserUsernameAndBomId(username, bomId);
+
+        return ListResponse.response(pagedComponentUsed.getContent(), totalCount);
+    }
+
     @Override
     public ComponentUsed findById(String id) {
         if(StringUtils.isBlank(id)) {

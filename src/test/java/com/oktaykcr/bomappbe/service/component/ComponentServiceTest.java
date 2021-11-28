@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -150,7 +151,7 @@ public class ComponentServiceTest {
     }
 
     @Test
-    public void list_shouldFindAll() {
+    public void listPaginated_shouldFindAll() {
         Component component = TestDataFactory.createComponent();
         List<Component> mockedComponentList = Collections.singletonList(component);
         ListResponse<Component> mockedListResponse = ListResponse.response(mockedComponentList, mockedComponentList.size());
@@ -160,16 +161,16 @@ public class ComponentServiceTest {
         Mockito.doReturn(pageBom).when(componentRepository).findAllByInventoryUserUsername(Mockito.anyString(), Mockito.any(Pageable.class));
         Mockito.doReturn((long) mockedComponentList.size()).when(componentRepository).countComponentByInventoryUserUsername(Mockito.anyString());
 
-        ListResponse<Component> listResponse = componentService.list(1, 1);
+        ListResponse<Component> listResponse = componentService.listPaginated(1, 1);
 
         assertEquals(mockedListResponse.getTotalCount(), listResponse.getTotalCount());
         assertEquals(mockedListResponse.getData().get(0), listResponse.getData().get(0));
     }
 
     @Test
-    public void list_pageNumberIsLessThanZero_shouldThrowException() {
+    public void listPaginated_pageNumberIsLessThanZero_shouldThrowException() {
         ApiException apiException = assertThrows(ApiException.class, () -> {
-            componentService.list(-1, 1);
+            componentService.listPaginated(-1, 1);
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
@@ -180,9 +181,9 @@ public class ComponentServiceTest {
     }
 
     @Test
-    public void list_pageOffsetIsLessThanZero_shouldThrowException() {
+    public void listPaginated_pageOffsetIsLessThanZero_shouldThrowException() {
         ApiException apiException = assertThrows(ApiException.class, () -> {
-            componentService.list(0, -1);
+            componentService.listPaginated(0, -1);
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
@@ -190,6 +191,24 @@ public class ComponentServiceTest {
 
         assertEquals(expectedMessage, apiException.getMessage());
         assertEquals(apiException.getParams()[0], expectedParam);
+    }
+
+    @Test
+    public void listAll_shouldFindAllComponents() {
+        Component component = TestDataFactory.createComponent();
+        List<Component> mockedComponentList = new ArrayList<>();
+        mockedComponentList.add(component);
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        ListResponse<Component> mockedListResponse = ListResponse.response(mockedComponentList, mockedComponentList.size());
+
+        Mockito.doReturn(mockedComponentList).when(componentRepository).findAllByInventoryUserUsername(Mockito.anyString());
+
+        ListResponse<Component> result = componentService.listAll();
+
+        assertEquals(mockedListResponse.getTotalCount(), result.getTotalCount());
+        assertEquals(mockedListResponse.getData().get(0), result.getData().get(0));
     }
 
     @Test

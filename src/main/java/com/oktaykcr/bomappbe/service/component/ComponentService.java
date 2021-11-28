@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -144,7 +145,7 @@ public class ComponentService extends BaseService<Component> {
     }
 
     @Override
-    public ListResponse<Component> list(Integer pageNumber, Integer pageOffset) {
+    public ListResponse<Component> listPaginated(Integer pageNumber, Integer pageOffset) {
         Pageable pageable = createPageable(pageNumber, pageOffset);
 
         String username = getCurrentAuthenticatedUsername();
@@ -152,6 +153,12 @@ public class ComponentService extends BaseService<Component> {
         long totalCount = componentRepository.countComponentByInventoryUserUsername(username);
 
         return ListResponse.response(pagedComponent.getContent(), totalCount);
+    }
+
+    public ListResponse<Component> listAll() {
+        String username = getCurrentAuthenticatedUsername();
+        List<Component> components = componentRepository.findAllByInventoryUserUsername(username);
+        return ListResponse.response(components, components.size());
     }
 
     @Override

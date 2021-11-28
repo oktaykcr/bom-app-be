@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,7 @@ class BomServiceTest {
     private UserRepository userRepository;
 
     @Test
-    public void list_shouldFindAll() {
+    public void listPaginated_shouldFindAll() {
         Bom bom = TestDataFactory.createBom();
         List<Bom> mockedBomList = Collections.singletonList(bom);
         ListResponse<Bom> mockedListResponse = ListResponse.response(mockedBomList, mockedBomList.size());
@@ -48,16 +49,16 @@ class BomServiceTest {
         Mockito.doReturn(pageBom).when(bomRepository).findAllByUserUsername(Mockito.anyString(), Mockito.any(Pageable.class));
         Mockito.doReturn((long) mockedBomList.size()).when(bomRepository).countBomByUserUsername(Mockito.any());
 
-        ListResponse<Bom> listResponse = bomService.list(1, 1);
+        ListResponse<Bom> listResponse = bomService.listPaginated(1, 1);
 
         assertEquals(mockedListResponse.getTotalCount(), listResponse.getTotalCount());
         assertEquals(mockedListResponse.getData().get(0), listResponse.getData().get(0));
     }
 
     @Test
-    public void list_pageNumberIsLessThanZero_shouldThrowException() {
+    public void listPaginated_pageNumberIsLessThanZero_shouldThrowException() {
         ApiException apiException = assertThrows(ApiException.class, () -> {
-            bomService.list(-1, 1);
+            bomService.listPaginated(-1, 1);
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
@@ -68,9 +69,9 @@ class BomServiceTest {
     }
 
     @Test
-    public void list_pageOffsetIsLessThanZero_shouldThrowException() {
+    public void listPaginated_pageOffsetIsLessThanZero_shouldThrowException() {
         ApiException apiException = assertThrows(ApiException.class, () -> {
-            bomService.list(0, -1);
+            bomService.listPaginated(0, -1);
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
@@ -78,6 +79,49 @@ class BomServiceTest {
 
         assertEquals(expectedMessage, apiException.getMessage());
         assertEquals(apiException.getParams()[0], expectedParam);
+    }
+
+    @Test
+    public void searchByTitle_shouldSearchByTitle() {
+        Bom bom = TestDataFactory.createBom();
+        bom.setTitle("a");
+
+        List<Bom> mockedBomList = new ArrayList<>();
+        mockedBomList.add(bom);
+
+        ListResponse<Bom> mockedListResponse = ListResponse.response(mockedBomList, mockedBomList.size());
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        Mockito.doReturn(mockedBomList).when(bomRepository).findAllByUserUsernameAndTitleContainingIgnoreCase(Mockito.anyString(), Mockito.anyString());
+
+        ListResponse<Bom> result = bomService.searchByTitle("a");
+        assertEquals(mockedListResponse.getTotalCount(), result.getTotalCount());
+        assertEquals(mockedListResponse.getData().get(0), result.getData().get(0));
+    }
+
+    @Test
+    public void searchByTitle_titleIsBlank_shouldFindAll() {
+        Bom bom = TestDataFactory.createBom();
+        bom.setTitle("a");
+
+        Bom bom2 = TestDataFactory.createBom();
+        bom2.setTitle("b");
+
+        List<Bom> mockedBomList = new ArrayList<>();
+        mockedBomList.add(bom);
+        mockedBomList.add(bom2);
+
+        ListResponse<Bom> mockedListResponse = ListResponse.response(mockedBomList, mockedBomList.size());
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        Mockito.doReturn(mockedBomList).when(bomRepository).findAllByUserUsername(Mockito.anyString());
+
+        ListResponse<Bom> result = bomService.searchByTitle("");
+        assertEquals(mockedListResponse.getTotalCount(), result.getTotalCount());
+        assertEquals(mockedListResponse.getData().get(0), result.getData().get(0));
+        assertEquals(mockedListResponse.getData().get(1), result.getData().get(1));
     }
 
     @Test

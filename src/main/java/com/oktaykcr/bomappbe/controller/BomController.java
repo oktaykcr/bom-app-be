@@ -21,7 +21,12 @@ public class BomController {
     @GetMapping(value = "")
     public ListResponse<Bom> list(@RequestParam(value = "pageNumber") Integer pageNumber,
                                   @RequestParam(value = "pageOffset") Integer pageOffset) {
-        return bomService.list(pageNumber, pageOffset);
+        return bomService.listPaginated(pageNumber, pageOffset);
+    }
+
+    @GetMapping(value = "/search")
+    public ListResponse<Bom> searchByTitle(@RequestParam(value = "title") String title) {
+        return bomService.searchByTitle(title);
     }
 
     @GetMapping(value = "/{id}")

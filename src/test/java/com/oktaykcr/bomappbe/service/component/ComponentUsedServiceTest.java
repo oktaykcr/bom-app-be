@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -275,7 +276,7 @@ public class ComponentUsedServiceTest {
     }
 
     @Test
-    public void list_shouldFindAll() {
+    public void listPaginated_shouldFindAll() {
         ComponentUsed componentUsed = TestDataFactory.createComponentUsed();
         List<ComponentUsed> mockedComponentUsedList = Collections.singletonList(componentUsed);
         ListResponse<ComponentUsed> mockedListResponse = ListResponse.response(mockedComponentUsedList, mockedComponentUsedList.size());
@@ -285,34 +286,16 @@ public class ComponentUsedServiceTest {
         Mockito.doReturn(pageComponentUsed).when(componentUsedRepository).findAllByBomUserUsername(Mockito.anyString(), Mockito.any(Pageable.class));
         Mockito.doReturn((long) mockedComponentUsedList.size()).when(componentUsedRepository).countComponentByBomUserUsername(Mockito.anyString());
 
-        ListResponse<ComponentUsed> listResponse = componentUsedService.list(1, 1);
+        ListResponse<ComponentUsed> listResponse = componentUsedService.listPaginated(1, 1);
 
         assertEquals(mockedListResponse.getTotalCount(), listResponse.getTotalCount());
         assertEquals(mockedListResponse.getData().get(0), listResponse.getData().get(0));
     }
 
     @Test
-    public void listByBom_shouldFindAll() {
-        ComponentUsed componentUsed = TestDataFactory.createComponentUsed();
-        componentUsed.getBom().setId("bomId");
-        List<ComponentUsed> mockedComponentUsedList = Collections.singletonList(componentUsed);
-        ListResponse<ComponentUsed> mockedListResponse = ListResponse.response(mockedComponentUsedList, mockedComponentUsedList.size());
-
-        SecurityContextTestHelper.mockSecurityContextHolder();
-        Page<ComponentUsed> pageComponentUsed = new PageImpl<>(mockedComponentUsedList);
-        Mockito.doReturn(pageComponentUsed).when(componentUsedRepository).findAllByBomUserUsernameAndBomId(Mockito.anyString(), Mockito.anyString(), Mockito.any(Pageable.class));
-        Mockito.doReturn((long) mockedComponentUsedList.size()).when(componentUsedRepository).countComponentByBomUserUsernameAndBomId(Mockito.anyString(), Mockito.anyString());
-
-        ListResponse<ComponentUsed> listResponse = componentUsedService.listByBomId(componentUsed.getBom().getId(), 1, 1);
-
-        assertEquals(mockedListResponse.getTotalCount(), listResponse.getTotalCount());
-        assertEquals(mockedListResponse.getData().get(0), listResponse.getData().get(0));
-    }
-
-    @Test
-    public void list_pageNumberIsLessThanZero_shouldThrowException() {
+    public void listPaginated_pageNumberIsLessThanZero_shouldThrowException() {
         ApiException apiException = assertThrows(ApiException.class, () -> {
-            componentUsedService.list(-1, 1);
+            componentUsedService.listPaginated(-1, 1);
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
@@ -323,13 +306,47 @@ public class ComponentUsedServiceTest {
     }
 
     @Test
-    public void list_pageOffsetIsLessThanZero_shouldThrowException() {
+    public void listPaginated_pageOffsetIsLessThanZero_shouldThrowException() {
         ApiException apiException = assertThrows(ApiException.class, () -> {
-            componentUsedService.list(0, -1);
+            componentUsedService.listPaginated(0, -1);
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
         String expectedParam = "pageOffset";
+
+        assertEquals(expectedMessage, apiException.getMessage());
+        assertEquals(apiException.getParams()[0], expectedParam);
+    }
+
+    @Test
+    public void listAllByBomId_shouldFindAllComponentsUsed() {
+        ComponentUsed componentUsed = TestDataFactory.createComponentUsed();
+
+        List<ComponentUsed> mockedComponentUsedList = new ArrayList<>();
+        mockedComponentUsedList.add(componentUsed);
+
+        ListResponse<ComponentUsed> mockedListResponse = ListResponse.response(mockedComponentUsedList, mockedComponentUsedList.size());
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        Mockito.doReturn(mockedComponentUsedList).when(componentUsedRepository).findAllByBomUserUsernameAndBomId(Mockito.anyString(), Mockito.anyString());
+
+        ListResponse<ComponentUsed> result = componentUsedService.listAllByBomId("bomId");
+
+        assertEquals(mockedListResponse.getTotalCount(), result.getTotalCount());
+        assertEquals(mockedListResponse.getData().get(0), result.getData().get(0));
+    }
+
+    @Test
+    public void listAllByBomId_bomIdIsNull_shouldThrowException() {
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        ApiException apiException = assertThrows(ApiException.class, () -> {
+            componentUsedService.listAllByBomId(null);
+        });
+
+        String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
+        String expectedParam = "bomId";
 
         assertEquals(expectedMessage, apiException.getMessage());
         assertEquals(apiException.getParams()[0], expectedParam);

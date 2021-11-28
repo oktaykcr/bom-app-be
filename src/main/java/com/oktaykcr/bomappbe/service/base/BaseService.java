@@ -13,7 +13,7 @@ public abstract class BaseService<T extends BaseModel> {
 
     public abstract T save(T t);
     public abstract T update(T t);
-    public abstract ListResponse<T> list(Integer pageNumber, Integer pageOffset);
+    public abstract ListResponse<T> listPaginated(Integer pageNumber, Integer pageOffset);
     public abstract T findById(String id);
     public abstract Boolean deleteById(String id);
 

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -96,7 +97,7 @@ public class ComponentUsedService extends BaseService<ComponentUsed> {
     }
 
     @Override
-    public ListResponse<ComponentUsed> list(Integer pageNumber, Integer pageOffset) {
+    public ListResponse<ComponentUsed> listPaginated(Integer pageNumber, Integer pageOffset) {
         Pageable pageable = createPageable(pageNumber, pageOffset);
 
         String username = getCurrentAuthenticatedUsername();
@@ -106,15 +107,15 @@ public class ComponentUsedService extends BaseService<ComponentUsed> {
         return ListResponse.response(pagedComponentUsed.getContent(), totalCount);
     }
 
-
-    public ListResponse<ComponentUsed> listByBomId(String bomId, Integer pageNumber, Integer pageOffset) {
-        Pageable pageable = createPageable(pageNumber, pageOffset);
-
+    public ListResponse<ComponentUsed> listAllByBomId(String bomId) {
         String username = getCurrentAuthenticatedUsername();
-        Page<ComponentUsed> pagedComponentUsed = componentUsedRepository.findAllByBomUserUsernameAndBomId(username, bomId, pageable);
-        long totalCount = componentUsedRepository.countComponentByBomUserUsernameAndBomId(username, bomId);
 
-        return ListResponse.response(pagedComponentUsed.getContent(), totalCount);
+        if(StringUtils.isBlank(bomId)) {
+            throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "bomId");
+        }
+
+        List<ComponentUsed> componentsUsed = componentUsedRepository.findAllByBomUserUsernameAndBomId(username, bomId);
+        return ListResponse.response(componentsUsed, componentsUsed.size());
     }
 
     @Override

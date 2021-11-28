@@ -21,7 +21,12 @@ public class ComponentController {
     @GetMapping(value = "")
     public ListResponse<Component> list(@RequestParam(value = "pageNumber") Integer pageNumber,
                                   @RequestParam(value = "pageOffset") Integer pageOffset) {
-        return componentService.list(pageNumber, pageOffset);
+        return componentService.listPaginated(pageNumber, pageOffset);
+    }
+
+    @GetMapping(value = "/all")
+    public ListResponse<Component> listAll() {
+        return componentService.listAll();
     }
 
     @GetMapping(value = "/{id}")

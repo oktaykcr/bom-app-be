@@ -21,14 +21,12 @@ public class ComponentUsedController {
     @GetMapping(value = "")
     public ListResponse<ComponentUsed> list(@RequestParam(value = "pageNumber") Integer pageNumber,
                                         @RequestParam(value = "pageOffset") Integer pageOffset) {
-        return componentUsedService.list(pageNumber, pageOffset);
+        return componentUsedService.listPaginated(pageNumber, pageOffset);
     }
 
-    @GetMapping(value = "/bybom")
-    public ListResponse<ComponentUsed> listByBomId(@RequestParam("bomId") String bomId,
-                                                   @RequestParam(value = "pageNumber") Integer pageNumber,
-                                            @RequestParam(value = "pageOffset") Integer pageOffset) {
-        return componentUsedService.listByBomId(bomId, pageNumber, pageOffset);
+    @GetMapping(value = "/all")
+    public ListResponse<ComponentUsed> listAll(@RequestParam("bomId") String bomId) {
+        return componentUsedService.listAllByBomId(bomId);
     }
 
     @GetMapping(value = "/{id}")

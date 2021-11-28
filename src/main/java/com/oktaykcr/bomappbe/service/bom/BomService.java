@@ -14,8 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,13 +29,26 @@ public class BomService extends BaseService<Bom> {
         this.userRepository = userRepository;
     }
 
-    public ListResponse<Bom> list(Integer pageNumber, Integer pageOffset) {
+    public ListResponse<Bom> listPaginated(Integer pageNumber, Integer pageOffset) {
         Pageable pageable = createPageable(pageNumber, pageOffset);
         String username = getCurrentAuthenticatedUsername();
         Page<Bom> pagedBom = bomRepository.findAllByUserUsername(username, pageable);
         long totalCount = bomRepository.countBomByUserUsername(username);
 
         return ListResponse.response(pagedBom.getContent(), totalCount);
+    }
+
+    public ListResponse<Bom> searchByTitle(String title) {
+        List<Bom> boms;
+        String username = getCurrentAuthenticatedUsername();
+        if(!StringUtils.isBlank(title)) {
+            boms = bomRepository.findAllByUserUsernameAndTitleContainingIgnoreCase(username, title);
+            return ListResponse.response(boms, boms.size());
+        }
+
+        boms = bomRepository.findAllByUserUsername(username);
+
+        return ListResponse.response(boms, boms.size());
     }
 
     public Bom save(Bom bom) {

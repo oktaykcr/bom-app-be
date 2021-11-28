@@ -52,7 +52,7 @@ public class InventoryService extends BaseService<Inventory> {
     }
 
     @Override
-    public ListResponse<Inventory> list(Integer pageNumber, Integer pageOffset) {
+    public ListResponse<Inventory> listPaginated(Integer pageNumber, Integer pageOffset) {
         return null;
     }
 

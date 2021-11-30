@@ -12,9 +12,11 @@
     <artifactId>bom-app-be</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>bom-app-be</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Manage your bill of materials easily</description>
+    <packaging>jar</packaging>
     <properties>
         <java.version>11</java.version>
+        <docker.image.prefix>bom-app-be</docker.image.prefix>
     </properties>
     <dependencies>
         <dependency>
@@ -87,6 +89,23 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.2.2</version>
+                <configuration>
+                    <imageName>${docker.image.prefix}</imageName>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
                 </configuration>
             </plugin>
         </plugins>

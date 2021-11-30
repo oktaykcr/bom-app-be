@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  app:
+    image: bom-app
+    container_name: bomapp-backend
+    build:
+      context: ./
+      dockerfile: src/main/docker/Dockerfile
+    ports:
+      - "8081:8081"
+    links:
+      - apppostgres
+
+  apppostgres:
+    image: postgres
+    container_name: bomapp-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=root
+      - POSTGRES_DB=postgres

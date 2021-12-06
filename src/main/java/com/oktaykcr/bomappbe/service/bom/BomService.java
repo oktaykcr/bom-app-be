@@ -65,6 +65,11 @@ public class BomService extends BaseService<Bom> {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "description");
         }
 
+        Optional<Bom> foundBom = bomRepository.findByUserUsernameAndTitle(user.getUsername(), bom.getTitle());
+        if(foundBom.isPresent()) {
+            throw ApiExceptionFactory.getApiException(ApiExceptionType.CONFLICT, "title");
+        }
+
         bom.setUser(user);
 
         return bomRepository.save(bom);

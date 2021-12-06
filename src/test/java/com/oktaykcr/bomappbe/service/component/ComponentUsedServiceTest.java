@@ -169,6 +169,29 @@ public class ComponentUsedServiceTest {
     }
 
     @Test
+    public void save_BomIdIsSameAndComponentPartNumberIsNotUnique_shouldThrowException() {
+        ComponentUsed componentUsed = TestDataFactory.createComponentUsed();
+        componentUsed.getBom().setId("bomId");
+
+        componentUsed.getComponent().setQuantityOnHand(500);
+        componentUsed.setQuantity(1000);
+
+        Mockito.doReturn(Optional.of(componentUsed.getBom())).when(bomRepository).findById(Mockito.anyString());
+        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(List.of(componentUsed)).when(componentUsedRepository).findByBomIdAndComponentPartNumber(Mockito.anyString(), Mockito.anyString());
+
+        ApiException apiException = assertThrows(ApiException.class, () -> {
+            componentUsedService.save(componentUsed);
+        });
+
+        String expectedMessage = ApiExceptionType.CONFLICT.getErrorCode();
+        String expectedParam = "component";
+
+        assertEquals(expectedMessage, apiException.getMessage());
+        assertEquals(apiException.getParams()[0], expectedParam);
+    }
+
+    @Test
     public void update_shouldUpdateComponentUsedAndComponentQuantityOnHand() {
         ComponentUsed oldComponentUsed = TestDataFactory.createComponentUsed();
         oldComponentUsed.setId("componentUsedId");

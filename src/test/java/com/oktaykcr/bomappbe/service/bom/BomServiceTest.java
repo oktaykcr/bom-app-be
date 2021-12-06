@@ -189,6 +189,28 @@ class BomServiceTest {
     }
 
     @Test
+    public void save_titleIsNotUnique_shouldThrowException() {
+        Bom bom = TestDataFactory.createBom();
+
+        User user = TestDataFactory.createUser();
+
+        SecurityContextTestHelper.mockSecurityContextHolder();
+
+        Mockito.doReturn(user).when(userRepository).findByUsername(Mockito.anyString());
+        Mockito.doReturn(Optional.of(bom)).when(bomRepository).findByUserUsernameAndTitle(Mockito.any(), Mockito.anyString());
+
+        ApiException apiException = assertThrows(ApiException.class, () -> {
+            bomService.save(bom);
+        });
+
+        String expectedMessage = ApiExceptionType.CONFLICT.getErrorCode();
+        String expectedParam = "title";
+
+        assertEquals(expectedMessage, apiException.getMessage());
+        assertEquals(apiException.getParams()[0], expectedParam);
+    }
+
+    @Test
     public void update_shouldUpdateBomTitle() {
         Bom updatedBom = TestDataFactory.createBom();
         updatedBom.setDescription(null);

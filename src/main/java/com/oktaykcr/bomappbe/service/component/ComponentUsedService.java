@@ -50,6 +50,12 @@ public class ComponentUsedService extends BaseService<ComponentUsed> {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "quantity");
         }
 
+        List<ComponentUsed> foundComponentUsed = componentUsedRepository
+                .findByBomIdAndComponentPartNumber(componentUsed.getBom().getId(), componentUsed.getComponent().getPartNumber());
+        if(foundComponentUsed.size() > 0) {
+            throw ApiExceptionFactory.getApiException(ApiExceptionType.CONFLICT, "component");
+        }
+
         Bom foundBom = getBomByIdIfExists(componentUsed.getBom().getId());
         Component foundComponent = getComponentByComponentUsedIfExists(componentUsed);
 

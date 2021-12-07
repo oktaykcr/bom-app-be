@@ -6,6 +6,7 @@ import com.oktaykcr.bomappbe.security.filter.JWTAuthorizationFilter;
 import com.oktaykcr.bomappbe.security.handler.AuthenticationEntryPointHandler;
 import com.oktaykcr.bomappbe.service.CustomUserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static com.oktaykcr.bomappbe.security.SecurityConstants.*;
 
@@ -31,6 +33,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Value("${server.allowed-origin}")
+    private String allowedOrigin;
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -72,8 +77,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        corsConfiguration.setMaxAge(3600l);
+        corsConfiguration.setAllowedOrigins(Collections.singletonList(allowedOrigin));
+        corsConfiguration.setMaxAge(3600L);
         corsConfiguration.setExposedHeaders(Arrays.asList(HEADER_TOKEN, HEADER_USERNAME));// otherwise can not get from client
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
         corsConfiguration.applyPermitDefaultValues();

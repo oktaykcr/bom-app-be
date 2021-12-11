@@ -42,7 +42,7 @@ public class TestDataFactory {
         component.setInventory(inventory);
         component.setSupplierLink("supplier");
         component.setQuantityOnHand(500);
-        component.setPartNumber("71-TNPU06037K50BZEN0");
+        component.setMouserPartNumber("71-TNPU06037K50BZEN0");
         return component;
     }
 

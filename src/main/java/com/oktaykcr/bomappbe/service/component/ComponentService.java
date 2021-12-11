@@ -60,11 +60,11 @@ public class ComponentService extends BaseService<Component> {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.NOT_FOUND, "user");
         }
 
-        if(StringUtils.isBlank(component.getPartNumber())) {
-            throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "partNumber");
+        if(StringUtils.isBlank(component.getMouserPartNumber())) {
+            throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "mouserPartNumber");
         }
 
-        Optional<Component> foundComponent = componentRepository.findByPartNumber(component.getPartNumber());
+        Optional<Component> foundComponent = componentRepository.findByMouserPartNumber(component.getMouserPartNumber());
         if(foundComponent.isPresent()) {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.CONFLICT, "component");
         }
@@ -84,10 +84,14 @@ public class ComponentService extends BaseService<Component> {
         String description = firstItem.get("Description").textValue();
         String imagePath = firstItem.get("ImagePath").textValue();
         String manufacturer = firstItem.get("Manufacturer").textValue();
+        String dataSheetUrl = firstItem.get("DataSheetUrl").textValue();
+        String manufacturerPartNumber = firstItem.get("ManufacturerPartNumber").textValue();
 
         component.setDescription(description);
         component.setImageUrl(imagePath);
         component.setManufacturerName(manufacturer);
+        component.setDataSheetUrl(dataSheetUrl);
+        component.setManufacturerPartNumber(manufacturerPartNumber);
 
         Optional<Inventory> currentUserInventory = inventoryRepository.getByUserUsername(user.getUsername());
         if(currentUserInventory.isEmpty()) {
@@ -118,7 +122,7 @@ public class ComponentService extends BaseService<Component> {
         ObjectNode rootNode = mapper.createObjectNode();
 
         ObjectNode childNode = mapper.createObjectNode();
-        childNode.put("mouserPartNumber", component.getPartNumber());
+        childNode.put("mouserPartNumber", component.getMouserPartNumber());
 
         rootNode.set("SearchByPartRequest", childNode);
         return rootNode;

@@ -111,7 +111,7 @@ public class ComponentServiceTest {
         assertEquals(component.getId(), result.getId());
         assertEquals(component.getDescription(), result.getDescription());
         assertEquals(component.getSupplierLink(), result.getSupplierLink());
-        assertEquals(component.getPartNumber(), result.getPartNumber());
+        assertEquals(component.getMouserPartNumber(), result.getMouserPartNumber());
         assertEquals(component.getQuantityOnHand(), result.getQuantityOnHand());
         assertEquals(component.getImageUrl(), result.getImageUrl());
         assertEquals(component.getManufacturerName(), result.getManufacturerName());
@@ -289,18 +289,20 @@ public class ComponentServiceTest {
         }
 
         Component componentRequest = new Component();
-        componentRequest.setPartNumber(component.getPartNumber());
+        componentRequest.setMouserPartNumber(component.getMouserPartNumber());
         componentRequest.setSupplierLink(component.getSupplierLink());
         componentRequest.setQuantityOnHand(component.getQuantityOnHand());
 
         Component result = componentService.save(componentRequest);
 
-        assertEquals(component.getPartNumber(), result.getPartNumber());
+        assertEquals(component.getMouserPartNumber(), result.getMouserPartNumber());
         assertEquals(component.getSupplierLink(), result.getSupplierLink());
         assertEquals(component.getQuantityOnHand(), result.getQuantityOnHand());
         assertEquals(component.getImageUrl(), result.getImageUrl());
         assertEquals(component.getManufacturerName(), result.getManufacturerName());
         assertEquals(component.getDescription(), result.getDescription());
+        assertEquals(component.getManufacturerPartNumber(), result.getManufacturerPartNumber());
+        assertEquals(component.getDataSheetUrl(), result.getDataSheetUrl());
     }
 
     @Test
@@ -321,9 +323,9 @@ public class ComponentServiceTest {
     }
 
     @Test
-    public void save_partNumberIsNull_shouldThrowException() {
+    public void save_mouserPartNumberIsNull_shouldThrowException() {
         Component component = TestDataFactory.createComponent();
-        component.setPartNumber(null);
+        component.setMouserPartNumber(null);
 
         User user = TestDataFactory.createUser();
 
@@ -335,7 +337,7 @@ public class ComponentServiceTest {
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
-        String expectedParam = "partNumber";
+        String expectedParam = "mouserPartNumber";
 
         assertEquals(expectedMessage, apiException.getMessage());
         assertEquals(apiException.getParams()[0], expectedParam);
@@ -349,7 +351,7 @@ public class ComponentServiceTest {
 
         SecurityContextTestHelper.mockSecurityContextHolder();
         Mockito.doReturn(user).when(userRepository).findByUsername(Mockito.anyString());
-        Mockito.doReturn(Optional.of(component)).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.of(component)).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentService.save(component);

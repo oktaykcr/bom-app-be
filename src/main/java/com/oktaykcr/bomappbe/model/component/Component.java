@@ -14,9 +14,11 @@ import javax.persistence.ManyToOne;
 @Getter @Setter
 public class Component extends BaseModel {
 
-    private String partNumber;
+    private String mouserPartNumber;
     private String imageUrl;
+    private String dataSheetUrl;
     private String description;
+    private String manufacturerPartNumber;
     private String manufacturerName;
     private String supplierLink;
     private int quantityOnHand;

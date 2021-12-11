@@ -42,8 +42,8 @@ public class ComponentUsedService extends BaseService<ComponentUsed> {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "bomId");
         }
 
-        if(StringUtils.isBlank(componentUsed.getComponent().getPartNumber())) {
-            throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "partNumber");
+        if(StringUtils.isBlank(componentUsed.getComponent().getMouserPartNumber())) {
+            throw ApiExceptionFactory.getApiException(ApiExceptionType.BAD_REQUEST, "mouserPartNumber");
         }
 
         if(componentUsed.getQuantity() <= 0) {
@@ -51,7 +51,7 @@ public class ComponentUsedService extends BaseService<ComponentUsed> {
         }
 
         List<ComponentUsed> foundComponentUsed = componentUsedRepository
-                .findByBomIdAndComponentPartNumber(componentUsed.getBom().getId(), componentUsed.getComponent().getPartNumber());
+                .findByBomIdAndComponentMouserPartNumber(componentUsed.getBom().getId(), componentUsed.getComponent().getMouserPartNumber());
         if(foundComponentUsed.size() > 0) {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.CONFLICT, "component");
         }
@@ -159,7 +159,7 @@ public class ComponentUsedService extends BaseService<ComponentUsed> {
     }
 
     private Component getComponentByComponentUsedIfExists(ComponentUsed componentUsed) {
-        Optional<Component> foundComponent = componentRepository.findByPartNumber(componentUsed.getComponent().getPartNumber());
+        Optional<Component> foundComponent = componentRepository.findByMouserPartNumber(componentUsed.getComponent().getMouserPartNumber());
         if (foundComponent.isEmpty()) {
             throw ApiExceptionFactory.getApiException(ApiExceptionType.NOT_FOUND, "component");
         }

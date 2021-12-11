@@ -48,7 +48,7 @@ public class ComponentUsedServiceTest {
         componentUsedRequest.getBom().setId("bomId");
 
         Mockito.doReturn(Optional.of(componentUsedRequest.getBom())).when(bomRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.of(componentUsedRequest.getComponent())).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.of(componentUsedRequest.getComponent())).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
 
         Mockito.doReturn(componentUsedRequest.getComponent()).when(componentRepository).save(Mockito.any(Component.class));
         Mockito.doReturn(componentUsedRequest).when(componentUsedRepository).save(Mockito.any(ComponentUsed.class));
@@ -76,17 +76,17 @@ public class ComponentUsedServiceTest {
     }
 
     @Test
-    public void save_componentPartNumberIsNull_shouldThrowException() {
+    public void save_componentMouserPartNumberIsNull_shouldThrowException() {
         ComponentUsed componentUsed = TestDataFactory.createComponentUsed();
         componentUsed.getBom().setId("bomId");
-        componentUsed.getComponent().setPartNumber(null);
+        componentUsed.getComponent().setMouserPartNumber(null);
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentUsedService.save(componentUsed);
         });
 
         String expectedMessage = ApiExceptionType.BAD_REQUEST.getErrorCode();
-        String expectedParam = "partNumber";
+        String expectedParam = "mouserPartNumber";
 
         assertEquals(expectedMessage, apiException.getMessage());
         assertEquals(apiException.getParams()[0], expectedParam);
@@ -133,7 +133,7 @@ public class ComponentUsedServiceTest {
         componentUsed.getBom().setId("bomId");
 
         Mockito.doReturn(Optional.of(componentUsed.getBom())).when(bomRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.empty()).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.empty()).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentUsedService.save(componentUsed);
@@ -155,7 +155,7 @@ public class ComponentUsedServiceTest {
         componentUsed.setQuantity(1000);
 
         Mockito.doReturn(Optional.of(componentUsed.getBom())).when(bomRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentUsedService.save(componentUsed);
@@ -177,8 +177,8 @@ public class ComponentUsedServiceTest {
         componentUsed.setQuantity(1000);
 
         Mockito.doReturn(Optional.of(componentUsed.getBom())).when(bomRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByPartNumber(Mockito.anyString());
-        Mockito.doReturn(List.of(componentUsed)).when(componentUsedRepository).findByBomIdAndComponentPartNumber(Mockito.anyString(), Mockito.anyString());
+        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
+        Mockito.doReturn(List.of(componentUsed)).when(componentUsedRepository).findByBomIdAndComponentMouserPartNumber(Mockito.anyString(), Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentUsedService.save(componentUsed);
@@ -209,7 +209,7 @@ public class ComponentUsedServiceTest {
         component.setQuantityOnHand(10);
 
         Mockito.doReturn(Optional.of(oldComponentUsed)).when(componentUsedRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
         Mockito.doReturn(component).when(componentRepository).save(Mockito.any(Component.class));
         Mockito.doReturn(componentUsed).when(componentUsedRepository).save(Mockito.any(ComponentUsed.class));
 
@@ -220,7 +220,7 @@ public class ComponentUsedServiceTest {
         assertEquals(componentUsed.getQuantity(), result.getQuantity());
         assertEquals(componentUsed.getLeadTime(), result.getLeadTime());
         assertEquals(componentUsed.getExtendedCost(), result.getExtendedCost());
-        assertEquals(component.getPartNumber(), result.getComponent().getPartNumber());
+        assertEquals(component.getMouserPartNumber(), result.getComponent().getMouserPartNumber());
         assertEquals(component.getQuantityOnHand(), result.getComponent().getQuantityOnHand());
         assertEquals(componentUsed.getBom().getId(), result.getBom().getId());
     }
@@ -264,7 +264,7 @@ public class ComponentUsedServiceTest {
         componentUsed.setId("componentUsedId");
 
         Mockito.doReturn(Optional.of(componentUsed)).when(componentUsedRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.empty()).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.empty()).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentUsedService.update(componentUsed);
@@ -285,7 +285,7 @@ public class ComponentUsedServiceTest {
         componentUsed.setQuantity(10);
 
         Mockito.doReturn(Optional.of(componentUsed)).when(componentUsedRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.of(componentUsed.getComponent())).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
 
         ApiException apiException = assertThrows(ApiException.class, () -> {
             componentUsedService.update(componentUsed);
@@ -390,7 +390,7 @@ public class ComponentUsedServiceTest {
         assertEquals(componentUsed.getExtendedCost(), result.getExtendedCost());
         assertEquals(componentUsed.getLeadTime(), result.getLeadTime());
         assertEquals(componentUsed.getBom().getId(), result.getBom().getId());
-        assertEquals(componentUsed.getComponent().getPartNumber(), result.getComponent().getPartNumber());
+        assertEquals(componentUsed.getComponent().getMouserPartNumber(), result.getComponent().getMouserPartNumber());
     }
 
     @Test
@@ -434,7 +434,7 @@ public class ComponentUsedServiceTest {
         Component component = TestDataFactory.createComponent();
 
         Mockito.doReturn(Optional.of(componentUsed)).when(componentUsedRepository).findById(Mockito.anyString());
-        Mockito.doReturn(Optional.of(component)).when(componentRepository).findByPartNumber(Mockito.anyString());
+        Mockito.doReturn(Optional.of(component)).when(componentRepository).findByMouserPartNumber(Mockito.anyString());
 
         component.setQuantityOnHand(component.getQuantityOnHand() + componentUsed.getQuantity());
         Mockito.doReturn(component).when(componentRepository).save(Mockito.any());

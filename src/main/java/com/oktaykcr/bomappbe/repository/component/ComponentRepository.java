@@ -14,5 +14,5 @@ public interface ComponentRepository extends BaseRepository<Component> {
     Page<Component> findAllByInventoryUserUsername(String username, Pageable pageable);
     List<Component> findAllByInventoryUserUsername(String username);
     Long countComponentByInventoryUserUsername(String username);
-    Optional<Component> findByPartNumber(String partNumber);
+    Optional<Component> findByMouserPartNumber(String partNumber);
 }

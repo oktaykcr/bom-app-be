@@ -62,6 +62,9 @@ docker-compose up output:
 c9b4153b2f85 bom-app "/bin/sh -c 'java -D…" 5 days ago Up 4 seconds 0.0.0.0:8081->8081/tcp bomapp-backend
 76154570fc1f postgres "docker-entrypoint.s…" 5 days ago Up 5 seconds 0.0.0.0:5432->5432/tcp bomapp-db
 ```
+### Rest Routes
+
+- You can get api doc from `http://localhost:8081/api/v1/swagger-ui/`. 
 
 ## 🎈 Usage <a name="usage"></a>
 

@@ -45,6 +45,14 @@ the [frontend](https://github.com/oktaykcr/bom-app-fe) side is developed with Re
 
 ### Prerequisites
 
+- Register mouser to generate search api key.
+  - Go [MouserAPI](https://eu.mouser.com/MyAccount/ManageApis) and create a new account.
+  - Go [Mouser Search API](https://eu.mouser.com/api-search/) to fetch data (image, description, manufacturer etc.) of components.
+    1. Complete the online Search API Request Form
+    2. They will email your Search API key and additional set-up information
+  - Change `mouser.api.search.key` with search api key at `src/main/resources/docker/application.properties`
+  - Change `mouser.api.search.key` with search api key at `src/main/resources/application.properties`
+  - For more info about [Mouser Api Doc](https://api.mouser.com/api/docs/ui/index).
 - Install *Docker* to execute `docker-compose.yml` file.
 
 ### Installing

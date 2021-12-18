@@ -90,6 +90,8 @@ c9b4153b2f85 bom-app "/bin/sh -c 'java -D…" 5 days ago Up 4 seconds 0.0.0.0:80
 
 Repeat these steps and manage your components easily.
 
+https://user-images.githubusercontent.com/26169464/146639001-64b2223d-3ef2-4399-92e4-79a8d78ad640.mp4
+
 ## 🚀 Deployment <a name = "deployment"></a>
 
 TODO
